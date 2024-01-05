@@ -10,7 +10,7 @@ from lib.eval import eval_ppl, eval_zero_shot
 
 print('torch', version('torch'))
 print('transformers', version('transformers'))
-print('accelerate', version('accelerate'))
+print('accelerate', version('balanced'))
 print('# of gpus: ', torch.cuda.device_count())
 
 def get_llm(model_name, cache_dir="llm_weights"):
@@ -58,9 +58,10 @@ def main():
     model.eval()
     tokenizer = AutoTokenizer.from_pretrained(args.model, use_fast=False)
 
-    device = torch.device("cuda:0")
-    if "30b" in args.model or "65b" in args.model: # for 30b and 65b we use device_map to load onto multiple A6000 GPUs, thus the processing here.
-        device = model.hf_device_map["lm_head"]
+    # device = torch.device("cuda:0")
+    # if "30b" in args.model or "65b" in args.model: # for 30b and 65b we use device_map to load onto multiple A6000 GPUs, thus the processing here.
+    #     device = model.hf_device_map["lm_head"]
+    device = model.hf_device_map["lm_head"]
     print("use device ", device)
 
     if args.sparsity_ratio != 0:
